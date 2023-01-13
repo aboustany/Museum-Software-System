@@ -1,0 +1,100 @@
+namespace ca.mcgill.ecse321.museumsystem.model;
+class MuseumSystem
+{
+  Integer museumID;
+  Integer openingHour;
+  Integer closingHour;
+  Integer visitorFee;
+}
+
+class Account
+{
+  abstract;
+  Integer accountID;
+  userName;
+  password;
+}
+
+class Owner
+{
+  isA Account;
+  Integer ownerID;
+  1 -- * EmployeeWeeklySchedule;  
+}
+
+
+class Employee
+{
+  isA Account;
+  Integer employeeID;
+  1 -- * EmployeeWeeklySchedule;
+}
+
+class Visitor
+{
+  isA Account;
+  Integer visitorID;
+  1 -- * ArtworkLoan;
+}
+
+class ArtworkLoan
+{
+  startDate;
+  endDate;
+  Boolean isApproved;
+  Integer loanID;
+}
+
+class Artwork 
+{
+  Boolean onDisplay;
+  Integer artworkID;
+  * -- 1 Room;
+}
+
+class LoanableArtwork
+{
+  Boolean isAvailable;
+  Integer rentalFee;
+}
+
+class Room
+{
+  Integer roomID;
+  Integer capacity;
+  Integer numberOfArtwork;
+}
+
+class Storage 
+{
+  isA Room;
+}
+
+class BigRoom 
+{
+  isA Room;
+}
+
+class SmallRoom 
+{
+  isA Room;
+}
+
+class EmployeeWeeklySchedule
+{
+  Integer scheduleID;
+  startDate;
+  endDate;
+}
+
+association 
+{
+ 1 MuseumSystem museum <@>- 0..1 Owner owner; 
+  1 MuseumSystem museum <@>- * Employee employee;
+  1 MuseumSystem museum <@>- * Artwork artPiece;
+  1 MuseumSystem museum <@>- 0..1 Storage storageRoom;
+  1 MuseumSystem museum <@>- 5 BigRoom largeRoom;
+  1 MuseumSystem museum <@>- 5 SmallRoom smallRoom;
+  * LoanableArtwork -- 1 Artwork; 
+  * ArtworkLoan -> 1 LoanableArtwork;  
+}

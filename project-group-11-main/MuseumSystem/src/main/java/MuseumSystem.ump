@@ -1,0 +1,118 @@
+namespace ca.mcgill.ecse321.museumsystem.model;
+
+@Entity
+class MuseumSystem
+{
+  depend javax.persistence.*;
+  @Id lazy immutable Integer museumID;
+  lazy Integer openingHour;
+  lazy Integer closingHour;
+  lazy Integer visitorFee;
+}
+
+@MappedSuperclass
+class Account
+{
+  abstract;
+  depend javax.persistence.*;
+  //@Id lazy immutable Integer accountID;
+  lazy userName;
+  lazy password;
+  Integer accountID;
+}
+
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE) class Owner
+{
+  isA Account;
+  depend javax.persistence.*;
+  @Id @OneToMany(mappedBy="owner")
+  1 <- * EmployeeWeeklySchedule;  
+}
+
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE) class Employee
+{
+  isA Account;
+  depend javax.persistence.*;
+  @Id @OneToMany(mappedBy="employee")
+  1 <- * EmployeeWeeklySchedule;
+}
+
+@Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE) class Visitor
+{
+  isA Account;
+  depend javax.persistence.*;
+  @Id @OneToMany(mappedBy="visitor")
+  1 <- * ArtworkLoan;
+}
+
+@Entity
+class ArtworkLoan
+{
+  lazy startDay;
+  lazy endDay;
+  lazy Boolean isApproved;
+  depend javax.persistence.*;
+  @Id lazy immutable Integer loanID;
+}
+
+@Entity
+class Artwork 
+{
+  lazy Boolean onDisplay;
+  depend javax.persistence.*;
+  @Id lazy immutable Integer artworkID;
+  @ManyToOne(optional=false)
+  * -> 1 Room;
+}
+
+class LoanableArtwork
+{
+  isA Artwork;
+  lazy Boolean isAvailable;
+  lazy Integer rentalFee;
+}
+
+@Entity
+class Room
+{
+  depend javax.persistence.*;
+  @Id lazy immutable Integer roomID;
+  lazy Integer capacity;
+  lazy Integer numberOfArtwork;
+}
+
+
+
+@Entity
+class EmployeeWeeklySchedule
+{
+  depend javax.persistence.*;
+  @Id lazy immutable Integer scheduleID;
+  lazy startDay;
+  lazy endDay;
+}
+
+
+association 
+{
+  1 MuseumSystem museum <@>- 1 Owner owner; 
+  @OneToMany(mappedBy="museum")
+  1 MuseumSystem museum <@>- * Employee employee;
+  @OneToMany(mappedBy="museum")
+  1 MuseumSystem museum <@>- * Artwork artPiece;
+  1 MuseumSystem museum <@>- * Room room;
+  1 MuseumSystem museum <@>- * EntryPass pass;
+  
+  @ManyToOne(optional=false)
+  * ArtworkLoan -> 1 LoanableArtwork;  
+}class EntryPass
+{
+  Integer passID;
+  Integer price;
+  date;
+* -> 1 Visitor;
+}
+
